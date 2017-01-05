@@ -100,6 +100,11 @@ MYMAP.init = function(selector, latLng, zoom) {
         mapTypeId: maptype
     }
 
+    if(typeof wpgmza_force_greedy_gestures !== "undefined"){
+        myOptions.gestureHandling = wpgmza_force_greedy_gestures;
+    }
+
+
     this.map = new google.maps.Map(jQuery(selector)[0], myOptions);
     this.bounds = new google.maps.LatLngBounds();
 
