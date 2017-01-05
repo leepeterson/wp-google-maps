@@ -16,8 +16,6 @@ Domain Path: /languages
  * Added an option to set default store locator address
  * Full screen map functionality added
  * Fixed a bug that caused PHP warnings when a polygon or polyline had no polydata
- * Fixed a bug that caused non-utf8 characters within an address to cause the insertion of the marker to fail
- * Touch Gesture override (Greedy)
  * 
  * 6.3.20 - 2016-09-27
  * Fixed a big that prevented the map from loading in a widget
@@ -307,6 +305,7 @@ define("WPGMAPS_DIR",plugin_dir_url(__FILE__));
 
 include ("base/includes/wp-google-maps-polygons.php");
 include ("base/includes/wp-google-maps-polylines.php");
+include ("base/includes/full-screen-module.php");
 include ("base/classes/widget_module.class.php");
 include ("base/includes/deprecated.php");
 
@@ -802,6 +801,8 @@ function wpgmaps_admin_edit_marker_javascript() {
     /* Chinese integration */
     if ($wpgmza_locale == "zh_CN") { $wpgmza_suffix = ".cn"; } else { $wpgmza_suffix = ".com"; } 
 
+    $wpgmza_locale = substr( $wpgmza_locale, 0, 2 );
+
     ?>
     <?php if( get_option( 'wpgmza_google_maps_api_key' ) ){ ?>
         <script type="text/javascript">
@@ -922,6 +923,8 @@ function wpgmaps_admin_javascript_basic() {
             if ($wpgmza_locale == "he_IL") { $wpgmza_locale = "iw"; }
             /* Chinese integration */
             if ($wpgmza_locale == "zh_CN") { $wpgmza_suffix = ".cn"; } else { $wpgmza_suffix = ".com"; } 
+
+            $wpgmza_locale = substr( $wpgmza_locale, 0, 2 );
             /**
              * Only register the below scrips so that they are available on demand. 
              */
@@ -2291,6 +2294,8 @@ function wpgmaps_tag_basic( $atts ) {
     /* Chinese integration */
     if ($wpgmza_locale == "zh_CN") { $wpgmza_suffix = ".cn"; } else { $wpgmza_suffix = ".com"; } 
 
+    $wpgmza_locale = substr( $wpgmza_locale, 0, 2 );
+
     $wpgmza_settings = get_option("WPGMZA_OTHER_SETTINGS");
 
     /**
@@ -2965,9 +2970,13 @@ function wpgmaps_head() {
 
         if( isset( $_POST['wpgmza_google_maps_api_key'] ) ){ update_option( 'wpgmza_google_maps_api_key', sanitize_text_field( trim($_POST['wpgmza_google_maps_api_key'] )) ); }
 
-        echo "<div class='updated'>";
+        echo "<div class='updated'><p>";
         _e("Your settings have been saved.","wp-google-maps");
-        echo "</div>";
+        echo "</p></div>";
+
+        if( function_exists( 'wpgmza_caching_notice_changes' ) ){
+            add_action( 'admin_notices', 'wpgmza_caching_notice_changes' );
+        }        
 
 
     }
@@ -5060,12 +5069,12 @@ function wpgmza_basic_menu() {
                                     </div>
                                 </div>
                                 <div id=\"wpgmaps_save_reminder\" style=\"display:none;\">
-                                    <div class=\"update-nag\" style='text-align:center;'>
-                                        
-                                             <h4>".__("Remember to save your map!","wp-google-maps")."</h4>
-                                           
+                                    <div class=\"update-nag\" style='text-align:center;'>                                        
+                                        <h4>".__("Remember to save your map!","wp-google-maps")."</h4>                                        
                                     </div>
-
+                                </div>
+                                <div id='wpgmaps_marker_cache_reminder' style='display: none;'>                                
+                                    ".wpgmza_caching_notice_changes(true, true)."
                                 </div>
                             </div>
                         </div>
@@ -5238,7 +5247,7 @@ function wpgmaps_admin_scripts() {
             wp_enqueue_style('fontawesome');
         }
 
-        if(strpos($_GET['page'], "wp-google-maps") !== -1){
+        if(strpos($_GET['page'], "wp-google-maps") !== false){
             wp_register_style('wpgmaps-admin-style', plugins_url('css/wp-google-maps-admin.css', __FILE__));
             wp_enqueue_style('wpgmaps-admin-style');
         }
@@ -6249,3 +6258,52 @@ function wpgmza_deregister_styles() {
     }
 }
 
+function wpgmza_caching_notice_changes($markers = false, $return = false){    
+
+    if( isset( $_GET['page'] ) && strpos( $_GET['page'], "wp-google-maps" ) !== false ){
+        
+        if( $return ){
+            $class = "update-nag";
+        } else {
+            $class = "notice notice-info";
+        }
+
+        $message = "";
+
+        if ( defined( 'W3TC' ) ) {
+            $cleared_link = "<a href='".admin_url('admin.php?page=w3tc_dashboard')."' class='button'>".__('clear your cache', 'wp-google-maps')."</a>";
+            if( $markers ){
+                $cleared_link = "<a href='".admin_url('admin.php?page=w3tc_dashboard')."' class='button'>".__('empty the page cache.', 'wp-google-maps')."</a>";
+                $message = __( "One or more markers have been added, please $cleared_link", "wp-google-maps" );  
+            } else {
+                $message = __( "We have detected that you are using W3 Total Cache on your website. Please $cleared_link to ensure the settings you have changed take effect on your map.", "wp-google-maps" );  
+            }
+        } else if( function_exists( 'wpsupercache_activate' ) ){
+            $cleared_link = "<a href='".admin_url('options-general.php?page=wpsupercache')."' class='button'>".__('clear your cache', 'wp-google-maps')."</a>";
+            if( $markers ){
+                $cleared_link = "<a href='".admin_url('options-general.php?page=wpsupercache')."' class='button'>".__('empty the page cache.', 'wp-google-maps')."</a>";
+                $message = __( "One or more markers have been added, please $cleared_link", "wp-google-maps" );                  
+            } else {
+                $message = __( "We have detected that you are using WP Super Cache on your website. Please $cleared_link to ensure the settings you have changed take effect on your map.", "wp-google-maps" );
+            }            
+        } else if( class_exists( 'WpFastestCache' ) ){
+            $cleared_link = "<a href='".admin_url('admin.php?page=wpfastestcacheoptions')."' class='button'>".__('clear your cache', 'wp-google-maps')."</a>";
+            if( $markers ){
+                $cleared_link = "<a href='".admin_url('admin.php?page=wpfastestcacheoptions')."' class='button'>".__('empty the page cache.', 'wp-google-maps')."</a>";
+                $message = __( "One or more markers have been added, please $cleared_link", "wp-google-maps" );              
+            } else {
+                $message = __( "We have detected that you are using WP Fastest Cache on your website. Please $cleared_link to ensure the settings you have changed take effect on your map.", "wp-google-maps" );
+            }
+        }
+        
+        if( $message != "" ){
+            if( $return ){
+                return "<div class='$class' style='border-color: #46b450;'><p>$message</p></div>"; 
+            } else {
+                echo "<div class='$class'><p>$message</p></div>";  
+            }
+        }
+
+    }
+
+}

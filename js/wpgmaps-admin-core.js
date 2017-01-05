@@ -232,6 +232,12 @@ jQuery(function() {
                     
                     MYMAP.map.setCenter(marker_data.point);
                     marker_added = false;
+                    
+                    if( jQuery("#wpgmaps_marker_cache_reminder").length > 0 ){
+
+                        jQuery("#wpgmaps_marker_cache_reminder").fadeIn();
+
+                    }
 
                     
                 });
@@ -280,6 +286,12 @@ jQuery(function() {
                             var myLatLng = new google.maps.LatLng(wpgm_lat,wpgm_lng);
                             MYMAP.map.setCenter(myLatLng);
                             marker_added = false;
+
+                            if( jQuery("#wpgmaps_marker_cache_reminder").length > 0 ){
+
+                                jQuery("#wpgmaps_marker_cache_reminder").fadeIn();
+                                
+                            }
                         });
                         
 
@@ -363,6 +375,12 @@ jQuery(function() {
                         jQuery("#wpgmza_edit_id").val("");
                         wpgmza_reinitialisetbl();
                         marker_added = false;
+
+                        if( jQuery("#wpgmaps_marker_cache_reminder").length > 0 ){
+
+                            jQuery("#wpgmaps_marker_cache_reminder").fadeIn();
+
+                        }
                     });
 
                 } else {
@@ -403,6 +421,11 @@ jQuery(function() {
                         jQuery("#wpgmza_edit_id").val("");
                         wpgmza_reinitialisetbl();
                         marker_added = false;
+                        if( jQuery("#wpgmaps_marker_cache_reminder").length > 0 ){
+
+                            jQuery("#wpgmaps_marker_cache_reminder").fadeIn();
+
+                        }
                     });
             }
 
