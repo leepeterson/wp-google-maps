@@ -16,6 +16,7 @@ Domain Path: /languages
  * Added an option to set default store locator address
  * Full screen map functionality added
  * Fixed a bug that caused PHP warnings when a polygon or polyline had no polydata
+ * Fixed a bug that caused non-utf8 characters within an address to cause the insertion of the marker to fail
  * 
  * 6.3.20 - 2016-09-27
  * Fixed a big that prevented the map from loading in a widget
@@ -305,7 +306,6 @@ define("WPGMAPS_DIR",plugin_dir_url(__FILE__));
 
 include ("base/includes/wp-google-maps-polygons.php");
 include ("base/includes/wp-google-maps-polylines.php");
-include ("base/includes/full-screen-module.php");
 include ("base/classes/widget_module.class.php");
 include ("base/includes/deprecated.php");
 
