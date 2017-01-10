@@ -2994,7 +2994,19 @@ function wpgmaps_head() {
  */
 function wpgmaps_feedback_head() {
         
-    
+    if( isset( $_POST['wpgmza_savemap'] ) ){
+
+        $wpgmza_settings = get_option('WPGMZA_OTHER_SETTINGS');
+            
+        if( isset( $wpgmza_settings['wpgmza_settings_enable_usage_tracking'] ) && $wpgmza_settings['wpgmza_settings_enable_usage_tracking'] == 'yes' ){
+
+            $map_id = sanitize_text_field($_POST['wpgmza_id']);
+
+            wpgmza_track_usage( $map_id );
+
+        }
+        
+    }
 
     
     if (isset($_POST['wpgmza_save_feedback'])) {
@@ -5252,15 +5264,17 @@ function wpgmaps_admin_scripts() {
             wp_enqueue_style('wpgmaps-admin-style');
         }
     }
-
-    $wpgmza_settings = get_option('WPGMZA_OTHER_SETTINGS');
-    if( isset( $wpgmza_settings['wpgmza_settings_enable_usage_tracking'] ) && $wpgmza_settings['wpgmza_settings_enable_usage_tracking'] == 'yes' ){
-        /** The user has allowed us to track their map usage */
+    /**
+     * Deprecated - anonymous tracking is now sent when a map is saved, if the option is enabled.      
+     */
+    /*
+    if( isset( $wpgmza_settings['wpgmza_settings_enable_usage_tracking'] ) && $wpgmza_settings['wpgmza_settings_enable_usage_tracking'] == 'yes' ){      
         if( ( isset( $_GET['action'] ) && $_GET['action'] == 'edit' ) && isset( $_GET['map_id'] ) ){
             wp_register_script('wpgmaps-usage-tracking', WPGMAPS_DIR.'js/usage_tracking.js', array('jquery'), '1.0.0', true);
             wp_enqueue_script('wpgmaps-usage-tracking');
         }
     }
+    */
 }
 function wpgmaps_user_styles() {
     /*
@@ -6087,44 +6101,15 @@ function wpgmza_deregister_scripts() {
 add_action('wp_ajax_track_usage', 'wpgmaps_usage_tracking_callback');
 add_action('wp_ajax_request_coupon', 'wpgmaps_usage_tracking_callback');
 
-function wpgmaps_usage_tracking_callback(){
+function wpgmaps_usage_tracking_callback(){    
 
     if( isset( $_POST['action'] ) ){
 
         if( $_POST['action'] == 'track_usage' ){
 
-            $wpgmza_settings = get_option('WPGMZA_OTHER_SETTINGS');
-            
-            if( isset( $wpgmza_settings['wpgmza_settings_enable_usage_tracking'] ) && $wpgmza_settings['wpgmza_settings_enable_usage_tracking'] == 'yes' ){
-
-                $map_data = wpgmza_get_map_data( sanitize_text_field( $_POST['mapid'] ) );
-
-                if( isset( $map_data->other_settings ) && $map_data->other_settings == '' ){
-                    
-                    /* New map - no changes have been made to it */
-
-                } else {
-
-                    if (function_exists('curl_version')) {
-                
-                        $request_url = "http://ccplugins.co/usage-tracking/record.php";
-
-                        $ch = curl_init();
-                        curl_setopt($ch, CURLOPT_URL, $request_url);
-                        curl_setopt($ch, CURLOPT_POST, 1);
-                        curl_setopt($ch, CURLOPT_POSTFIELDS, $map_data);
-                        curl_setopt($ch, CURLOPT_REFERER, $_SERVER['HTTP_HOST']);
-                        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-                        
-                        $output = curl_exec($ch);                            
-
-                        curl_close($ch);
-
-                    } 
-
-                }
-
-            }
+        /**
+         * No longer being done in Ajax. Will track when the map is saved.
+         */
 
         }
 
@@ -6306,4 +6291,165 @@ function wpgmza_caching_notice_changes($markers = false, $return = false){
 
     }
 
+}
+
+function wpgmza_track_usage( $map_id ){
+
+    global $wpdb;
+    global $wpgmza_tblname_maps;
+
+    $wpgmza_data = array();
+
+    $wpgmza_settings = get_option('WPGMZA_OTHER_SETTINGS');
+            
+    if( isset( $wpgmza_settings['wpgmza_settings_enable_usage_tracking'] ) && $wpgmza_settings['wpgmza_settings_enable_usage_tracking'] == 'yes' ){
+        
+        $map_data = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $wpgmza_tblname_maps WHERE `id` = %d LIMIT 1" , intval( $map_id ) ), ARRAY_A );        
+        
+        if( isset( $map_data->other_settings ) && $map_data->other_settings == '' ){
+            
+            /* New map - no changes have been made to it */
+
+        } else {
+
+            $wpgmza_data['map_data'] = maybe_serialize( $map_data );            
+
+            /**
+             * Quantity of maps
+             */                    
+            $qty_maps = $wpdb->get_row( "SELECT COUNT(*) as `map_count` FROM ".$wpdb->prefix."wpgmza_maps" );
+            $wpgmza_total_maps = isset( $qty_maps->map_count ) ? $qty_maps->map_count : 'error';           
+
+            $wpgmza_data['map_data_total_maps'] = $wpgmza_total_maps;         
+            
+            /**
+             * Quantity of markers
+             */
+            $qty_markers = $wpdb->get_row( "SELECT COUNT(*) as `marker_count` FROM ".$wpdb->prefix."wpgmza" );
+            $wpgmza_total_markers = isset( $qty_markers->marker_count ) ? $qty_markers->marker_count : 'error';                    
+            
+            $wpgmza_data['map_data_total_markers'] = $wpgmza_total_markers;
+
+            /**
+             * WP Version
+             */
+            $wpgmza_wp_version = get_bloginfo( "version" );
+
+            $wpgmza_data['wp_version'] = $wpgmza_wp_version;
+            
+            /**
+             * Basic & Pro Current versions
+             */                    
+            global $wpgmza_version;
+            global $wpgmza_pro_version;
+
+            $wpgmza_data['basic_version_number'] = $wpgmza_version;
+            $wpgmza_data['pro_version_number'] = $wpgmza_pro_version;
+            
+            /**
+             * Global settings
+             */                 
+            
+            $wpgmza_data['global_settings'] = maybe_serialize( $wpgmza_settings );
+
+            /**
+             * Other settings for map
+             */
+            
+            if( isset( $map_data['other_settings'] ) ){
+                
+                if( $map_data['other_settings'] != '' ){
+
+                    $other_data = maybe_unserialize( $map_data['other_settings'] );                    
+
+                    if( $other_data ){
+
+                        $wpgmza_data['other_map_data'] = maybe_serialize( $other_data );
+
+                    }
+
+                }
+
+            }
+            
+            /**
+             * Current theme active
+             */
+            $current_theme = wp_get_theme();                    
+            if( $current_theme ){
+                
+                $wpgmza_data['current_theme_name'] = $current_theme->get('Name');
+                $wpgmza_data['current_theme_version'] = $current_theme->get('Version');
+            
+            } else {
+                
+                $wpgmza_data['current_theme_name'] = 'unknown';
+                $wpgmza_data['current_theme_version'] = 'unknown';
+
+            }
+
+            /**
+             * Current PHP Version
+             */
+            if( function_exists( 'phpversion' ) ){
+                $wpgmza_php_version = phpversion();                        
+            } else {
+                $wpgmza_php_version = 'unknown';
+            }
+
+            $wpgmza_data['php_version'] = $wpgmza_php_version;
+                
+            /**
+             * Current memory allocated to WP
+             */
+            if( defined( 'WP_MEMORY_LIMIT' ) ){
+                $wpgmza_memory_limit = WP_MEMORY_LIMIT;
+            } else {
+                $wpgmza_memory_limit = 'unknown';
+            }               
+
+            $wpgmza_data['allocated_memory'] = $wpgmza_memory_limit;
+
+            /**
+             * Is Debugging Enabled
+             */
+            if( defined( 'WP_DEBUG' ) ){
+                $wpgmza_debug = WP_DEBUG;
+            } else {
+                $wpgmza_debug = 'unknown';
+            }
+
+            $wpgmza_data['wp_debug'] = $wpgmza_debug;
+            
+            /**
+             * Site Language
+             */
+            if( function_exists( 'get_locale' ) ){
+                $wpgmza_locale = get_locale();    
+            } else {
+                $wpgmza_locale = 'unknown';
+            }
+            
+            $wpgmza_data['locale'] = $wpgmza_locale;            
+            
+            if (function_exists('curl_version')) {
+        
+                $request_url = "http://ccplugins.co/usage-tracking/record_comprehensive.php";
+
+                $ch = curl_init();
+                curl_setopt($ch, CURLOPT_URL, $request_url);
+                curl_setopt($ch, CURLOPT_POST, 1);
+                curl_setopt($ch, CURLOPT_POSTFIELDS, $wpgmza_data);
+                curl_setopt($ch, CURLOPT_REFERER, $_SERVER['HTTP_HOST']);
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+                
+                $output = curl_exec($ch);                            
+                
+                curl_close($ch);
+
+            } 
+
+        }
+
+    }
 }
