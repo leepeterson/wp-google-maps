@@ -6101,7 +6101,7 @@ function wpgmza_deregister_scripts() {
 add_action('wp_ajax_track_usage', 'wpgmaps_usage_tracking_callback');
 add_action('wp_ajax_request_coupon', 'wpgmaps_usage_tracking_callback');
 
-function wpgmaps_usage_tracking_callback(){    
+function wpgmaps_usage_tracking_callback(){
 
     if( isset( $_POST['action'] ) ){
 
