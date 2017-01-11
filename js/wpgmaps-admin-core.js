@@ -64,7 +64,6 @@ jQuery(function() {
             var myLatLng = new google.maps.LatLng(wpgmaps_localize[wpgmaps_mapid].map_start_lat ,wpgmaps_localize[wpgmaps_mapid].map_start_lng);
             MYMAP.init('#wpgmza_map', myLatLng, parseInt(wpgmaps_localize[wpgmaps_mapid].map_start_zoom));
             UniqueCode=Math.round(Math.random()*10000);
-            console.log("starting load of markers");
             MYMAP.placeMarkers(wpgmaps_markerurl + '?u='+UniqueCode,wpgmaps_mapid,null,myLatLng);
         }
 
@@ -212,14 +211,12 @@ jQuery(function() {
 
                     marker_id = returned_data.marker_id;
                     marker_data = returned_data.marker_data[marker_id];
-                    console.log(marker_data);
                     wpgmaps_localize_marker_data[marker_id] = marker_data;
                     marker_data.map = MYMAP.map;
 
                     marker_data.point = new google.maps.LatLng(wpgm_lat,wpgm_lng);
 
                     add_marker(marker_data);
-                    console.log("1222");
 
                     //wpgmza_InitMap();
                     jQuery("#wpgmza_marker_holder").html(JSON.parse(response).table_html);
@@ -242,11 +239,9 @@ jQuery(function() {
                     
                 });
             } else { 
-                console.log("geocoding "+wpgm_address);
                 geocoder.geocode ({ 'address': wpgm_address }, function(results, status) {
                     if (status == google.maps.GeocoderStatus.OK) {
 
-                        console.log(results);
                         wpgm_gps = String(results[0].geometry.location);
                         var latlng1 = wpgm_gps.replace("(","");
                         var latlng2 = latlng1.replace(")","");
@@ -359,7 +354,6 @@ jQuery(function() {
                         returned_data = JSON.parse(response);
                         marker_id = returned_data.marker_id;
                         marker_data = returned_data.marker_data[marker_id];
-                        console.log(marker_data);
                         wpgmaps_localize_marker_data[marker_id] = marker_data;
                         marker_data.map = MYMAP.map;
 
@@ -785,8 +779,6 @@ MYMAP.placeMarkers = function(filename,map_id,radius,searched_center,distance_ty
 
 
 function add_marker(marker_data) {
-    console.log("test");
-    console.log(marker_data.point);
 
 
     if (typeof wpgmaps_markers_array[marker_data.marker_id] !== "undefined") {
@@ -817,7 +809,6 @@ function add_marker(marker_data) {
         }
     } else { d_string = ''; }
     infoWindow[marker_data.marker_id] = new google.maps.InfoWindow();
-    console.log("this far");
     var html='<span style=\'min-width:100px; display:block;\'>'+marker_data.address+'</span>'+d_string;
     if (marker_data.infoopen === "1") {
         infoWindow[marker_data.marker_id].setContent(html);

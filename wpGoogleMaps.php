@@ -2704,6 +2704,9 @@ function wpgmaps_head() {
         echo "<div class='updated'>";
         _e("Your settings have been saved.","wp-google-maps");
         echo "</div>";
+        if( function_exists( 'wpgmza_caching_notice_changes' ) ){
+            add_action( 'admin_notices', 'wpgmza_caching_notice_changes' );
+        }        
 
     }
 
@@ -6244,7 +6247,6 @@ function wpgmza_deregister_styles() {
 }
 
 function wpgmza_caching_notice_changes($markers = false, $return = false){    
-
     if( isset( $_GET['page'] ) && strpos( $_GET['page'], "wp-google-maps" ) !== false ){
         
         if( $return ){
@@ -6255,37 +6257,32 @@ function wpgmza_caching_notice_changes($markers = false, $return = false){
 
         $message = "";
 
+        $w3tc_nonce_url = wp_nonce_url( network_admin_url(
+                    'admin.php?page=w3tc_dashboard&amp;w3tc_flush_all' ),
+                'w3tc' );
+
         if ( defined( 'W3TC' ) ) {
-            $cleared_link = "<a href='".admin_url('admin.php?page=w3tc_dashboard')."' class='button'>".__('clear your cache', 'wp-google-maps')."</a>";
-            if( $markers ){
-                $cleared_link = "<a href='".admin_url('admin.php?page=w3tc_dashboard')."' class='button'>".__('empty the page cache.', 'wp-google-maps')."</a>";
-                $message = __( "One or more markers have been added, please $cleared_link", "wp-google-maps" );  
-            } else {
-                $message = __( "We have detected that you are using W3 Total Cache on your website. Please $cleared_link to ensure the settings you have changed take effect on your map.", "wp-google-maps" );  
-            }
+            $cache_plugin = "W3 Total Cache";
+            $cleared_link = $w3tc_nonce_url;
         } else if( function_exists( 'wpsupercache_activate' ) ){
-            $cleared_link = "<a href='".admin_url('options-general.php?page=wpsupercache')."' class='button'>".__('clear your cache', 'wp-google-maps')."</a>";
-            if( $markers ){
-                $cleared_link = "<a href='".admin_url('options-general.php?page=wpsupercache')."' class='button'>".__('empty the page cache.', 'wp-google-maps')."</a>";
-                $message = __( "One or more markers have been added, please $cleared_link", "wp-google-maps" );                  
-            } else {
-                $message = __( "We have detected that you are using WP Super Cache on your website. Please $cleared_link to ensure the settings you have changed take effect on your map.", "wp-google-maps" );
-            }            
+            $cache_plugin = "WP Super Cache";
+            $cleared_link = admin_url('options-general.php?page=wpsupercache');
         } else if( class_exists( 'WpFastestCache' ) ){
-            $cleared_link = "<a href='".admin_url('admin.php?page=wpfastestcacheoptions')."' class='button'>".__('clear your cache', 'wp-google-maps')."</a>";
-            if( $markers ){
-                $cleared_link = "<a href='".admin_url('admin.php?page=wpfastestcacheoptions')."' class='button'>".__('empty the page cache.', 'wp-google-maps')."</a>";
-                $message = __( "One or more markers have been added, please $cleared_link", "wp-google-maps" );              
-            } else {
-                $message = __( "We have detected that you are using WP Fastest Cache on your website. Please $cleared_link to ensure the settings you have changed take effect on your map.", "wp-google-maps" );
-            }
+            $cache_plugin = "WP Fastest Cache";
+            $cleared_link = admin_url('admin.php?page=wpfastestcacheoptions');
+        }
+
+        if ($markers) {
+            $message = sprintf( __( "One or more markers have been added or changed, please <a href='%s' class='button'>clear your cache.</a>", "wp-google-maps" ), $cleared_link );                  
+        } else {
+            $message = sprintf( __( "We have detected that you are using %s on your website. Please <a href='%s' class='button'>clear your cache</a> to ensure that your map is updated.", "wp-google-maps" ), $cache_plugin, $cleared_link );
         }
         
         if( $message != "" ){
             if( $return ){
-                return "<div class='$class' style='border-color: #46b450;'><p>$message</p></div>"; 
+                return "<div class='$class' style='border-color: #46b450; line-height: 25px; padding-top:5px; padding-bottom:5px;'>$message</div>"; 
             } else {
-                echo "<div class='$class'><p>$message</p></div>";  
+                echo "<div class='$class' style='border-color: #46b450; line-height: 25px; padding-top:5px; padding-bottom:5px;'>$message</div>";  
             }
         }
 

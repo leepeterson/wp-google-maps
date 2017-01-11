@@ -115,7 +115,6 @@ MYMAP.init = function(selector, latLng, zoom) {
     } 
     
     jQuery( "#wpgmza_map").trigger( 'wpgooglemaps_loaded' );
-    console.log("trigger");
 
     
 
