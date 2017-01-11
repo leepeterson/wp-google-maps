@@ -56,7 +56,6 @@ jQuery(document).ready(function () {
 });
 
 function check_map(mapid) {
-    console.log("checking map..");
 
 
     if(MYMAP.map !== null){
