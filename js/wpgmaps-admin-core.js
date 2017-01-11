@@ -158,7 +158,10 @@ jQuery(function() {
             var wpgmza_edit_title = jQuery("#wpgmza_hid_marker_title_"+cur_id).val();
             var wpgmza_edit_anim = jQuery("#wpgmza_hid_marker_anim_"+cur_id).val();
             var wpgmza_edit_infoopen = jQuery("#wpgmza_hid_marker_infoopen_"+cur_id).val();
-
+            
+            if( wpgmza_edit_anim == '' ){ wpgmza_edit_anim = '0'; }
+            if( wpgmza_edit_infoopen == '' ){ wpgmza_edit_infoopen = '0'; }
+            
             wpgmza_edit_lat = jQuery("#wpgmza_hid_marker_lat_"+cur_id).val();
             wpgmza_edit_lng = jQuery("#wpgmza_hid_marker_lng_"+cur_id).val();
             
