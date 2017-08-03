@@ -1,8 +1,4 @@
 <div id="wpgmza-map-edit-page">
-	<div class="wpgmza-preloader main-preloader">
-		<div class="wpgmza-loader">Loading...</div>
-	</div>
-
 	<form method="POST" class="wpgmza" style="display: none;">
 		<button id="wpgmza-top-save" type="submit">
 			<i class="fa fa-floppy-o" aria-hidden="true"></i>
@@ -25,6 +21,10 @@
 			?>
 		</h2>-->
 	
+		<div class="wpgmza-preloader main-preloader">
+			<div class="wpgmza-loader">Loading...</div>
+		</div>
+	
 		<div smart:import-php="<?php
 			echo WPGMZA_DIR . 'html/map-edit-page-map-panel.html';
 		?>"></div>
@@ -34,7 +34,7 @@
 		</p>
 		
 		<div smart:import-php="<?php
-			echo WPGMZA_DIR . 'html/map-edit-page-pro-advert.html';
+			echo WPGMZA_DIR . 'html/map-edit-page-pro-advert.php';
 		?>"></div>
 	</form>
 	
