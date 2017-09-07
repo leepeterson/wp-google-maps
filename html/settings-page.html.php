@@ -588,6 +588,7 @@
 					_e("Custom JavaScript","wp-google-maps");
 					?>
 				</h4>
+				
 				<fieldset>
 					<label>
 						<?php
@@ -595,6 +596,22 @@
 						?>
 					</label>
 					<textarea name="custom_js"></textarea>
+				</fieldset>
+				<fieldset>
+					<label>
+						<?php
+						_e("Custom JavaScript Dependencies","wp-google-maps");
+						?>
+					</label>
+					<div>
+						<input name="custom_js_dependencies" />
+						<br/>
+						<small>
+							<?php
+							_e('Comma separated script handles', 'wp-google-maps');
+							?>
+						</small>
+					</div>
 				</fieldset>
 				
 				<fieldset>

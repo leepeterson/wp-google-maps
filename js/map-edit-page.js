@@ -8,6 +8,8 @@
 	{
 		var self = this;
 		
+		WPGMZA.assertInstanceOf(this, "MapEditPage");
+		
 		this.map = null;
 		this.rightClickCursor = null;
 		this.editMapObjectTarget = null;

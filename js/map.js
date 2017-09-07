@@ -8,6 +8,8 @@
 	{
 		var self = this;
 		
+		WPGMZA.assertInstanceOf(this, "Map");
+		
 		WPGMZA.EventDispatcher.call(this);
 		
 		if(!(element instanceof HTMLElement))
@@ -284,6 +286,17 @@
 		this.dispatchEvent({type: "polygonremoved", polygon: polygon});
 	}
 	
+	WPGMZA.Map.prototype.getPolylineByID = function(id)
+	{
+		for(var i = 0; i < this.polylines.length; i++)
+		{
+			if(this.polylines[i].id == id)
+				return this.polylines[i];
+		}
+		
+		return null;
+	}
+	
 	/**
 	 * Adds the specified polyline to this map
 	 * @return void
@@ -431,6 +444,9 @@
 					json = response;
 				
 				self.onFetchComplete(json);
+			},
+			error: function(xhr, status, error) {
+				alert("Error fetching map objects :- " + error);
 			}
 		});
 	}

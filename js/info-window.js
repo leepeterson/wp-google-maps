@@ -4,6 +4,8 @@
 	{
 		var self = this;
 		
+		WPGMZA.assertInstanceOf(this, "InfoWindow");
+		
 		this.mapObject = mapObject;
 		
 		mapObject.addEventListener("added", function(event) { 

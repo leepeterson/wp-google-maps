@@ -2,6 +2,8 @@
 	
 	WPGMZA.DrawingManager = function(map)
 	{
+		WPGMZA.assertInstanceOf(this, "DrawingManager");
+		
 		WPGMZA.EventDispatcher.call(this);
 		
 		this.map = map;

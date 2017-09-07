@@ -3,6 +3,8 @@
 	{
 		var self = this;
 		
+		WPGMZA.assertInstanceOf(this, "Polyline");
+		
 		this.title = null;
 		
 		WPGMZA.MapObject.apply(this, arguments);

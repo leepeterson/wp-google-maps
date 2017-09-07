@@ -4,6 +4,8 @@
 	{
 		var self = this;
 		
+		WPGMZA.assertInstanceOf(this, "MapObject");
+		
 		WPGMZA.EventDispatcher.call(this);
 		
 		this.id = -1;

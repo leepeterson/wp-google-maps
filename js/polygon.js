@@ -3,6 +3,8 @@
 	{
 		var self = this;
 		
+		WPGMZA.assertInstanceOf(this, "Polygon");
+		
 		this.paths = null;
 		this.title = null;
 		this.name = null;

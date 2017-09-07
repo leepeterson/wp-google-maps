@@ -8,6 +8,8 @@
 	{
 		var self = this;
 		
+		WPGMZA.assertInstanceOf(this, "Marker");
+		
 		WPGMZA.EventDispatcher.call(this);
 		
 		this.lat = "36.778261";
@@ -33,22 +35,27 @@
 	WPGMZA.Marker.prototype = Object.create(WPGMZA.MapObject.prototype);
 	WPGMZA.Marker.prototype.constructor = WPGMZA.Marker;
 	
-	WPGMZA.Marker.createInstance = function(row)
+	WPGMZA.Marker.getConstructor = function()
 	{
 		switch(WPGMZA.settings.engine)
 		{
 			case "google-maps":
 				if(WPGMZA.isProVersion())
-					return new WPGMZA.GoogleProMarker(row);
-				return new WPGMZA.GoogleMarker(row);
+					return WPGMZA.GoogleProMarker;
+				return WPGMZA.GoogleMarker;
 				break;
 				
 			default:
 				if(WPGMZA.isProVersion())
-					return new WPGMZA.OSMProMarker(row);
-				return new WPGMZA.OSMMarker(row);
+					return WPGMZA.OSMProMarker;
+				return WPGMZA.OSMMarker;
 				break;
 		}
+	}
+	
+	WPGMZA.Marker.createInstance = function(row)
+	{
+		return WPGMZA.Marker.getInstanceClass();
 	}
 	
 	WPGMZA.Marker.ANIMATION_NONE			= "0";

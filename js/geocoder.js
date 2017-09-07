@@ -2,7 +2,7 @@
 	
 	WPGMZA.Geocoder = function()
 	{
-		
+		WPGMZA.assertInstanceOf(this, "Geocoder");
 	}
 	
 	WPGMZA.Geocoder.createInstance = function()

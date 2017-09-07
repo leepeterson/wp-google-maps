@@ -23,15 +23,6 @@
 			self.dispatchEvent("mouseover");
 		});
 		
-		$(this.element).on("mousewheel", function(event) {
-			var zoom = self.map.getZoom();
-			zoom += (event.deltaY > 0 ? 1 : -1);
-			self.map.setZoom(zoom);
-			
-			event.preventDefault();
-			return false;
-		});
-		
 		this.overlay = new ol.Overlay({
 			element: this.element
 		});

@@ -134,6 +134,49 @@ var WPGMZA = {
 				$(friendlyErrorContainer).append(friendlyError.element);
 				$(friendlyErrorContainer).show();
 			}
+	},
+	
+	/**
+	 * This function is for checking inheritence has been setup correctly.
+	 * For objects that have engine and Pro specific classes, it will automatically
+	 * add the engine and pro prefix to the supplied string and if such an object
+	 * exists it will test against that name rather than the un-prefix argument
+	 * supplied.
+	 *
+	 * For example, if we are running the Pro addon with Google maps as the engine,
+	 * if you supply Marker as the instance name the function will check to see
+	 * if instance is an instance of GoogleProMarker
+	 *
+	 * return @void
+	 */
+	assertInstanceOf: function(instance, instanceName) {
+		var engine, fullInstanceName, assert;
+		var pro = WPGMZA.isProVersion() ? "Pro" : "";
+		
+		switch(WPGMZA.settings.engine)
+		{
+			case "google-maps":
+				engine = "Google";
+				break;
+			
+			default:
+				engine = "OSM";
+				break;
+		}
+		
+		if(WPGMZA[engine + pro + instanceName])
+			fullInstanceName = engine + pro + instanceName;
+		else if(WPGMZA[pro + instanceName])
+			fullInstanceName = pro + instanceName;
+		else if(WPGMZA[engine + instanceName])
+			fullInstanceName = engine + instanceName;
+		else
+			fullInstanceName = instanceName;
+		
+		assert = instance instanceof WPGMZA[fullInstanceName];
+		
+		if(!assert)
+			throw new Error("Object must be an instance of " + fullInstanceName);
 	}
 };
 

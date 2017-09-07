@@ -9,6 +9,8 @@
 	{
 		var self = this;
 		
+		WPGMZA.assertInstanceOf(this, "StoreLocator");
+		
 		this.map = map;
 		this.element = $(map.element).find(".store-locator")[0];
 		this.units = "kilometers";
