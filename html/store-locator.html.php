@@ -1,4 +1,4 @@
-<div class="store-locator" data-wpgmza-layout-element="store-locator" data-wpgmza-wp-action-before="wpgmza_map_store_locator_container_before" data-wpgmza-wp-action-after="wpgmza_map_store_locator_container_after">
+<div class="store-locator" data-wpgmza-layout-element="store-locator" data-wpgmza-wp-filter-prepend="wpgmza_map_store_locator_container_prepend" data-wpgmza-wp-filter-append="wpgmza_map_store_locator_container_append">
 	<fieldset>
 		<label name="store_locator_query_string"></label>
 		<div>

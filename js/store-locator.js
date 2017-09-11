@@ -59,17 +59,17 @@
 		this.clear();
 	}
 	
-	WPGMZA.StoreLocator.createInstance = function(map)
+	WPGMZA.StoreLocator.getConstructor = function()
 	{
 		if(WPGMZA.isProVersion())
 			switch(WPGMZA.settings.engine)
 			{
 				case "google-maps":
-					return new WPGMZA.GoogleProStoreLocator(map);
+					return WPGMZA.GoogleProStoreLocator;
 					break;
 					
 				default:
-					return new WPGMZA.OSMProStoreLocator(map);
+					return WPGMZA.OSMProStoreLocator;
 					break;
 			}
 
@@ -77,13 +77,19 @@
 			switch(WPGMZA.settings.engine)
 			{
 				case "google-maps":
-					return new WPGMZA.GoogleStoreLocator(map);
+					return WPGMZA.GoogleStoreLocator;
 					break;
 					
 				default:
-					return new WPGMZA.OSMStoreLocator(map);
+					return WPGMZA.OSMStoreLocator;
 					break;
 			}
+	}
+	
+	WPGMZA.StoreLocator.createInstance = function(map)
+	{
+		var constructor = WPGMZA.StoreLocator.getConstructor();
+		return new constructor(map);
 	}
 	
 	/**

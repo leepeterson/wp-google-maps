@@ -16,22 +16,28 @@
 	WPGMZA.Polygon.prototype = Object.create(WPGMZA.MapObject.prototype);
 	WPGMZA.Polygon.prototype.constructor = WPGMZA.Polygon;
 	
-	WPGMZA.Polygon.createInstance = function(row)
+	WPGMZA.Polygon.getConstructor = function()
 	{
 		switch(WPGMZA.settings.engine)
 		{
 			case "google-maps":
 				if(WPGMZA.isProVersion())
-					return new WPGMZA.GoogleProPolygon(row);
-				return new WPGMZA.GooglePolygon(row);
+					return WPGMZA.GoogleProPolygon;
+				return WPGMZA.GooglePolygon;
 				break;
 				
 			default:
 				if(WPGMZA.isProVersion())
-					return new WPGMZA.OSMProPolygon(row);
-				return new WPGMZA.OSMPolygon(row);
+					return WPGMZA.OSMProPolygon;
+				return WPGMZA.OSMPolygon;
 				break;
 		}
+	}
+	
+	WPGMZA.Polygon.createInstance = function(row)
+	{
+		var constructor = WPGMZA.Polygon.getConstructor();
+		return new constructor(row);
 	}
 	
 	WPGMZA.Polygon.prototype.toJSON = function()

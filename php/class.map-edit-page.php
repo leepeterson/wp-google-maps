@@ -99,7 +99,6 @@ class MapEditPage extends AdminPage
 		$this->loadPHPFile(WPGMZA_DIR . 'html/map-edit-page.html.php');
 		
 		apply_filters('wpgmza_map_edit_page_init', $this);
-		apply_filters('wpgmza_output_filter', $this->map);
 	}
 	
 	protected function enqueueScripts()
@@ -128,9 +127,10 @@ class MapEditPage extends AdminPage
 		wp_enqueue_script('wpgmza-drawing-manager', WPGMZA_BASE . "js/drawing-manager.js", array('wpgmza-event-dispatcher'));
 		wp_enqueue_script('wpgmza-vertex-context-menu', WPGMZA_BASE . 'js/vertex-context-menu.js', array('wpgmza-event-dispatcher'));
 		
-		$dependencies = array('wpgmza-map-edit-page');
 		if($wpgmza->isProVersion())
-			$dependencies[] = 'wpgmza-pro-map-edit-page';
+			$dependencies = array('wpgmza-pro-map-edit-page');
+		else
+			$dependencies = array('wpgmza-map-edit-page');
 		
 		// Remodal dialog
 		wp_enqueue_script('remodal', WPGMZA_BASE . 'lib/remodal.min.js');
@@ -140,6 +140,8 @@ class MapEditPage extends AdminPage
 		do_action( 'wpgmza_map_edit_page_scripts' );
 
 		// Engine specific code
+		$dependencyVersion = ($wpgmza->isProVersion() ? "pro-" : "");
+		
 		switch(Plugin::$settings->engine)
 		{
 			case 'google-maps':
@@ -147,14 +149,14 @@ class MapEditPage extends AdminPage
 				
 				wp_enqueue_script('wpgmza-engine-drawing-manager', WPGMZA_BASE . "js/google-maps/google-drawing-manager.js", array('wpgmza-drawing-manager'));
 				
-				
 				wp_enqueue_script('wpgmza-google-map-edit-page', WPGMZA_BASE . "js/google-maps/google-map-edit-page.js", $dependencies);
 				break;
 				
 			default:
 				wp_enqueue_script('wpgmza-engine-drawing-manager', WPGMZA_BASE . "js/open-street-map/osm-drawing-manager.js", $dependencies);
-			
-				wp_enqueue_script('wpgmza-osm-map-edit-page', WPGMZA_BASE . "js/open-street-map/osm-map-edit-page.js", $dependencies);
+				
+				wp_enqueue_script("wpgmza-osm-map-edit-page", WPGMZA_BASE . "js/open-street-map/osm-map-edit-page.js", $dependencies);
+				
 				break;
 		}
 	}

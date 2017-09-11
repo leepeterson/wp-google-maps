@@ -104,7 +104,13 @@ class Plugin
 		// Load scripts if "always load scripts" is on
 		if(!empty(Plugin::$settings->always_load_scripts))
 		{
-			$this->map->enqueueScripts();
+			// TODO: This is a bit of a hack, use late static binding instead
+			global $wpdb;
+			global $WPGMZA_TABLE_NAME_MAPS;
+			
+			$id = $wpdb->get_var("SELECT id FROM $WPGMZA_TABLE_NAME_MAPS LIMIT 1");
+			if($id)
+				$temp = new Map($id);
 			
 			if($this->isProVersion())
 			{
@@ -128,11 +134,11 @@ class Plugin
 				switch(Plugin::$settings->engine)
 				{
 					case 'google-maps':
-						require_once(WPGMZA_PRO_DIR . 'php/google-maps/class.google-maps-loader.php');
+						require_once(WPGMZA_DIR . 'php/google-maps/class.google-maps-loader.php');
 						$loader = new GoogleMapsLoader();
 						break;
 					default:
-						require_once(WPGMZA_PRO_DIR . 'php/open-street-map/class.osm-loader.php');
+						require_once(WPGMZA_DIR . 'php/open-street-map/class.osm-loader.php');
 						$loader = new OSMLoader();
 						break;
 				}
@@ -173,8 +179,6 @@ class Plugin
 	{
 		$data = clone Plugin::$settings;
 		
-		$data = apply_filters('wpgmza_get_localized_data', $data);
-		
 		$data->ajaxurl 					= admin_url('admin-ajax.php');
 		$data->fast_ajaxurl				= WPGMZA_BASE . 'php/ajax.fetch.php';
 		$data->is_pro_version			= $this->isProVersion();
@@ -191,6 +195,8 @@ class Plugin
 			'geocode_failed' 		=> __('We couldn\'t find that address, please try again', 'wp-google-maps'),
 			'no_address_entered'	=> __('Please enter an address', 'wp-google-maps')
 		) );
+		
+		$data = apply_filters('wpgmza_get_localized_data', $data);
 		
 		return $data;
 	}
@@ -511,6 +517,22 @@ class Plugin
 			call_user_func_array('add_submenu_page', $arr);
 	}
 	
+	protected function createMapEditPage()
+	{
+		if($this->isProVersion())
+		{
+			require_once(WPGMZA_PRO_DIR . 'php/class.pro-map-edit-page.php');
+			$document = new ProMapEditPage();
+		}
+		else
+		{
+			require_once(WPGMZA_DIR . 'php/class.map-edit-page.php');
+			$document = new MapEditPage();
+		}
+		
+		return $document;
+	}
+	
 	/**
 	 * Echos the maps page
 	 * @return void
@@ -532,16 +554,7 @@ class Plugin
 				break;
 				
 			case 'edit':
-				if($this->isProVersion())
-				{
-					require_once(WPGMZA_PRO_DIR . 'php/class.pro-map-edit-page.php');
-					$document = new ProMapEditPage();
-				}
-				else
-				{
-					require_once(WPGMZA_DIR . 'php/class.map-edit-page.php');
-					$document = new MapEditPage();
-				}
+				return $this->createMapEditPage();
 				break;
 			
 			default:

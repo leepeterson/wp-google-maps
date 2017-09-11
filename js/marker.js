@@ -35,6 +35,12 @@
 	WPGMZA.Marker.prototype = Object.create(WPGMZA.MapObject.prototype);
 	WPGMZA.Marker.prototype.constructor = WPGMZA.Marker;
 	
+	/**
+	 * Gets the constructor. You can use this instead of hard coding the parent class when inheriting,
+	 * which is helpful for making subclasses that work with Basic only, Pro, Google, OSM or a 
+	 * combination of the four.
+	 * @return function
+	 */
 	WPGMZA.Marker.getConstructor = function()
 	{
 		switch(WPGMZA.settings.engine)
@@ -55,7 +61,8 @@
 	
 	WPGMZA.Marker.createInstance = function(row)
 	{
-		return WPGMZA.Marker.getInstanceClass();
+		var constructor = WPGMZA.Marker.getConstructor();
+		return new constructor(row);
 	}
 	
 	WPGMZA.Marker.ANIMATION_NONE			= "0";

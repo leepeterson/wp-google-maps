@@ -5,18 +5,24 @@
 		WPGMZA.assertInstanceOf(this, "Geocoder");
 	}
 	
-	WPGMZA.Geocoder.createInstance = function()
+	WPGMZA.Geocoder.getConstructor = function()
 	{
 		switch(WPGMZA.settings.engine)
 		{
 			case "google-maps":
-				return new WPGMZA.GoogleGeocoder();
+				return WPGMZA.GoogleGeocoder;
 				break;
 				
 			default:
-				return new WPGMZA.OSMGeocoder();
+				return WPGMZA.OSMGeocoder;
 				break;
 		}
+	}
+	
+	WPGMZA.Geocoder.createInstance = function()
+	{
+		var constructor = WPGMZA.Geocoder.getConstructor();
+		return new constructor();
 	}
 	
 	WPGMZA.Geocoder.prototype.getLatLngFromAddress = function(options, callback)

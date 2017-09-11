@@ -271,8 +271,8 @@ form.wpgmza .default-radius-units
 	font-size: 18px;
 }
 
-#wpgmza-markers-tab.add-marker button.update-marker,
-	#wpgmza-markers-tab.add-marker button.delete-marker,
+#markers.add-marker button.update-marker,
+	#markers.add-marker button.delete-marker,
 	
 	#polygons.add-polygon button.update-polygon,
 	#polygons.add-polygon button.delete-polygon,
@@ -283,7 +283,7 @@ form.wpgmza .default-radius-units
 	display: none;
 }
 
-#wpgmza-markers-tab.update-marker button#add-marker,
+#markers.update-marker button#add-marker,
 	#polygons.update-polygon button#draw-polygon,
 	#polylines.update-polyline button#draw-polyline
 {
