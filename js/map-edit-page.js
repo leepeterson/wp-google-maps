@@ -8,6 +8,8 @@
 	{
 		var self = this;
 		
+		WPGMZA.assertInstanceOf(this, "MapEditPage");
+		
 		this.map = null;
 		this.rightClickCursor = null;
 		this.editMapObjectTarget = null;
@@ -262,7 +264,7 @@
 		
 		// Move polygon and polyline instructions from map edit panel into map element
 		$(".wpgmza-engine-map").append(
-			$("#wpgmza-markers-tab-instructions")
+			$("#markers-instructions")
 		);
 		
 		$(".wpgmza-engine-map").append(
@@ -392,13 +394,35 @@
 		$("form.wpgmza").show();
 	}
 	
+	WPGMZA.MapEditPage.getConstructor = function()
+	{
+		var pro = WPGMZA.isProVersion();
+		
+		switch(WPGMZA.settings.engine)
+		{
+			case "google-maps":
+				return (pro ? WPGMZA.GoogleProMapEditPage : WPGMZA.GoogleMapEditPage);
+				break;
+			
+			default:
+				return (pro ? WPGMZA.OSMProMapEditPage : WPGMZA.OSMMapEditPage);
+				break;
+		}
+	}
+	
+	WPGMZA.MapEditPage.createInstance = function()
+	{
+		var constructor = WPGMZA.MapEditPage.getConstructor();
+		return new constructor();
+	}
+	
 	/**
 	 * Gets the name of an input without it's prefix
 	 * @return string
 	 */
 	WPGMZA.MapEditPage.prototype.getInputNameWithoutPrefix = function(name)
 	{
-		return name.replace(/^.+?-/, "");
+		return name.replace(/^(polygon|polyline|heatmap)?-/, "");
 	}
 	
 	/**
@@ -492,7 +516,7 @@
 		else
 			marker = this.editMapObjectTarget;
 		
-		$("#wpgmza-markers-tab").find("input[name], select[name], textarea[name]").each(function(index, el) {
+		$("#markers").find("input[name], select[name], textarea[name]").each(function(index, el) {
 			self.inputValueToMapObjectProperty(el, marker);
 		});
 		
@@ -524,7 +548,7 @@
 	 */
 	WPGMZA.MapEditPage.prototype.clearMarkerFields = function()
 	{
-		$("#wpgmza-markers-tab").find("input[name], textarea[name], select[name]").each(function(index, el) {
+		$("#markers").find("input[name], textarea[name], select[name]").each(function(index, el) {
 			switch(String($(el).attr("type")).toLowerCase())
 			{
 				case "radio":
@@ -570,7 +594,7 @@
 		this.map.panTo(marker.getPosition());
 		
 		// Fill the form with markers data
-		$("#wpgmza-markers-tab").find("input, select, textarea").each(function(index, el) {
+		$("#markers").find("input, select, textarea").each(function(index, el) {
 			if($(el).parents(".wp-editor-wrap").length)
 				return;
 			
@@ -598,7 +622,7 @@
 		});
 		
 		// Set the form to update (not add)
-		$("#wpgmza-markers-tab").removeClass("add-marker").addClass("update-marker");
+		$("#markers").removeClass("add-marker").addClass("update-marker");
 	}
 	
 	/**
@@ -644,7 +668,7 @@
 	{
 		// Switch to the marker tab
 		$("#wpgmza_map_panel .wpgmza-tabs").tabs({
-			active: this.getTabIndexByID("wpgmza-markers-tab")
+			active: this.getTabIndexByID("markers")
 		});
 		
 		// Put lat/lng into the address box
@@ -1270,7 +1294,7 @@
 			return;
 		
 		this.clearMarkerFields();
-		$("#wpgmza-markers-tab").removeClass("update-marker").addClass("add-marker");
+		$("#markers").removeClass("update-marker").addClass("add-marker");
 		
 		$("#polygons input:not([type])").val("");
 		$("#polygons").removeClass("update-polygon").addClass("add-polygon");
@@ -1380,19 +1404,13 @@
 	
 	$(document).ready(function() {
 
-		var pro = WPGMZA.isProVersion();
-		
 		WPGMZA.runCatchableTask(function() {
-			switch(WPGMZA.settings.engine)
-			{
-				case "google-maps":
-					WPGMZA.mapEditPage = (pro ? new WPGMZA.GoogleProMapEditPage() : new WPGMZA.GoogleMapEditPage());
-					break;
-				
-				default:
-					WPGMZA.mapEditPage = (pro ? new WPGMZA.OSMProMapEditPage() : new WPGMZA.OSMMapEditPage());
-					break;
-			}
+			
+			WPGMZA.mapEditPage = WPGMZA.MapEditPage.createInstance();
+			
+			// Fire the event here, not in the constructor, so that the Pro constructor can finish running
+			WPGMZA.events.dispatchEvent("mapeditpageready");
+			
 		}, $("form.wpgmza"));
 	});
 })(jQuery);

@@ -34,7 +34,11 @@ class SettingsPage extends AdminPage
 		wp_enqueue_style('remodal-default-theme', WPGMZA_BASE . 'lib/remodal-default-theme.css');
 		
 		if(!empty($_POST))
+		{
 			$this->onFormSubmitted();
+			wp_redirect($_SERVER['REQUEST_URI']);
+			exit;
+		}
 
 		do_action('wpgmza_basic_settings_page_enqueue_scripts');
 	}
@@ -48,7 +52,7 @@ class SettingsPage extends AdminPage
 		$form = $this->querySelector('form');
 		
 		if(!$form->validate())
-			return;
+			return false;
 		
 		foreach($_POST as $key => $value)
 		{
@@ -64,9 +68,6 @@ class SettingsPage extends AdminPage
 			$name = $input->getAttribute('name');
 			Plugin::$settings->{$name} = isset($_POST[$name]);
 		}
-		
-		wp_redirect($_SERVER['REQUEST_URI']);
-		exit;
 	}
 }
 

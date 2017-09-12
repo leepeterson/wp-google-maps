@@ -46,7 +46,10 @@
 	WPGMZA.GoogleMarker.prototype.setPosition = function(latLng)
 	{
 		parentConstructor.prototype.setPosition.call(this, latLng);
-		this.googleMarker.setPosition(latLng);
+		this.googleMarker.setPosition({
+			lat: this.lat,
+			lng: this.lng
+		});
 	}
 	
 	/**

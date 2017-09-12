@@ -70,7 +70,7 @@
 	</p>
 	
 	<table class="wp-list-table widefat fixed wpgmza-listing">
-		<thead data-wpgmza-wp-action-before="wpgmza_map_listing_header_before" data-wpgmza-wp-action-after="wpgmza_map_listing_header_after">
+		<thead data-wpgmza-wp-filter-prepend="wpgmza_map_listing_header_prepend" data-wpgmza-wp-filter-append="wpgmza_map_listing_header_append">
 			<tr>
 				<th scope="col" id="id" class="manage-column column-id sortable desc">
 					<?php
@@ -104,7 +104,7 @@
 				</th>
 			</tr>
 		</thead>
-		<tbody id="the-list" class="list:wp_list_text_link wpgmza-map-list" data-wpgmza-wp-action-before="wpgmza_map_listing_body_after" data-wpgmza-wp-action-after="wpgmza_map_listing_body_after">
+		<tbody id="the-list" class="list:wp_list_text_link wpgmza-map-list" data-wpgmza-wp-action-before="wpgmza_map_listing_body_after" data-wpgmza-wp-filter-append="wpgmza_map_listing_body_append">
 			<tr class="template">
 				<td name="id"></td>
 				<td>

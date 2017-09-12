@@ -8,10 +8,10 @@
 	<div>
 		<div id="wpgmza-map-container"/>
 	
-		<div id="map-edit-tabs" class="wpgmza-tabs" data-wpgmza-wp-action-before="wpgmza_map_editor_tab_container_before" data-wpgmza-wp-action-after="wpgmza_map_editor_tab_container_after">
-			<ul data-wpgmza-wp-action-before="wpgmza_map_editor_tab_before" data-wpgmza-wp-action-after="wpgmza_map_editor_tab_after">
+		<div id="map-edit-tabs" class="wpgmza-tabs" data-wpgmza-wp-filter-prepend="wpgmza_map_editor_tab_container_prepend" data-wpgmza-wp-filter-append="wpgmza_map_editor_tab_container_append">
+			<ul data-wpgmza-wp-filter-prepend="wpgmza_map_editor_tab_prepend" data-wpgmza-wp-filter-append="wpgmza_map_editor_tab_append">
 				<li>
-					<a href="#wpgmza-markers-tab">
+					<a href="#markers">
 						<?php
 						_e("Markers","wp-google-maps");
 						?>
@@ -53,7 +53,7 @@
 					</a>
 				</li>
 			</ul>
-			<div id="wpgmza-markers-tab" class="add-marker no-submit" data-wpgmza-wp-action-before="wpgmza_markers_tab_before" data-wpgmza-wp-action-after="wpgmza_markers_tab_after">
+			<div id="markers" class="add-marker no-submit" data-wpgmza-wp-filter-prepend="wpgmza_markers_tab_prepend" data-wpgmza-wp-filter-append="wpgmza_markers_tab_append">
 				<fieldset class="wpgmza-pro-version-only">
 					<label>
 						<?php
@@ -153,7 +153,7 @@
 					echo WPGMZA_DIR . 'html/map-edit-page-marker-list.html.php';
 				?>"></div>
 			</div>
-			<div id="advanced-markers" class="wpgmza-free-version-only no-submit" data-wpgmza-wp-action-before="wpgmza_advanced_markers_before" data-wpgmza-wp-action-after="wpgmza_advanced_markers_after">
+			<div id="advanced-markers" class="wpgmza-free-version-only no-submit" data-wpgmza-wp-filter-prepend="wpgmza_advanced_markers_prepend" data-wpgmza-wp-filter-append="wpgmza_advanced_markers_append">
 				<div class="update-nag update-att">
 					<i class="fa fa-arrow-circle-right"></i>
 					<a target="_blank" href="<?php
@@ -334,7 +334,7 @@
 					?>
 				</div>
 			</div>
-			<div id="polygons" class="add-polygon no-submit" data-wpgmza-wp-action-before="wpgmza_polygons_tab_before" data-wpgmza-wp-action-after="wpgmza_polygons_tab_after">
+			<div id="polygons" class="add-polygon no-submit" data-wpgmza-wp-filter-prepend="wpgmza_polygons_tab_prepend" data-wpgmza-wp-filter-append="wpgmza_polygons_tab_append">
 				<fieldset>
 					<label>
 						<?php _e("Name", "wp-google-maps"); ?>
@@ -455,7 +455,7 @@
 					</button>
 				</fieldset>
 			</div>
-			<div id="polylines" class="add-polyline no-submit" data-wpgmza-wp-action-before="wpgmza_polylines_tab_before" data-wpgmza-wp-action-after="wpgmza_polylines_tab_after">
+			<div id="polylines" class="add-polyline no-submit" data-wpgmza-wp-filter-prepend="wpgmza_polylines_tab_prepend" data-wpgmza-wp-filter-append="wpgmza_polylines_tab_append">
 				<fieldset>
 					<label>
 						<?php
@@ -544,12 +544,12 @@
 				</div>
 			</div>
 			
-			<div id="settings" data-wpgmza-wp-action-before="wpgmza_settings_tab_before" data-wpgmza-wp-action-after="wpgmza_settings_tab_after" smart:import-php="<?php 
+			<div id="settings" data-wpgmza-wp-filter-prepend="wpgmza_settings_tab_prepend" data-wpgmza-wp-filter-append="wpgmza_settings_tab_append" smart:import-php="<?php 
 				echo WPGMZA_DIR . 'html/map-edit-page-settings-panel.html.php'; 
 			?>"></div>
 		</div>
 		
-		<div id="wpgmza-markers-tab-instructions" class="update-nag update-blue update-slim">
+		<div id="markers-instructions" class="update-nag update-blue update-slim">
 			<ul>
 				<li>
 					<?php

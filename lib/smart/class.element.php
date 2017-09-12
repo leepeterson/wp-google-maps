@@ -366,6 +366,10 @@ class Element extends \DOMElement
 				$target->setValue($value);
 				break;
 				
+			case 'img':
+				$target->setAttribute('src', $value);
+				break;
+				
 			default:
 				if(!is_null($formatters) && isset($formatters[$key]))
 					$value = $formatters[$key]($value);
@@ -572,9 +576,7 @@ class Element extends \DOMElement
 				break;
 				
 			default:
-				echo "Setting nodeValue on {$this->nodeName}";
-				echo "<pre>";
-				throw new \Exception('No');
+				throw new \Exception('Not yet implemented');
 				
 				$this->nodeValue = $value;
 				break;

@@ -2,6 +2,8 @@
 	
 	WPGMZA.DrawingManager = function(map)
 	{
+		WPGMZA.assertInstanceOf(this, "DrawingManager");
+		
 		WPGMZA.EventDispatcher.call(this);
 		
 		this.map = map;
@@ -16,18 +18,24 @@
 	WPGMZA.DrawingManager.MODE_POLYGON			= "polygon";
 	WPGMZA.DrawingManager.MODE_POLYLINE			= "polyline";
 	
-	WPGMZA.DrawingManager.createInstance = function(map)
+	WPGMZA.DrawingManager.getConstructor = function()
 	{
 		switch(WPGMZA.settings.engine)
 		{
 			case "google-maps":
-				return new WPGMZA.GoogleDrawingManager(map);
+				return WPGMZA.GoogleDrawingManager;
 				break;
 				
 			default:
-				return new WPGMZA.OSMDrawingManager(map);
+				return WPGMZA.OSMDrawingManager;
 				break;
 		}
+	}
+	
+	WPGMZA.DrawingManager.createInstance = function(map)
+	{
+		var constructor = WPGMZA.DrawingManager.getConstructor();
+		return new constructor(map);
 	}
 	
 	WPGMZA.DrawingManager.prototype.setDrawingMode = function(mode)

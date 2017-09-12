@@ -196,7 +196,6 @@
 	 */
 	WPGMZA.OSMMap.prototype.addMarker = function(marker)
 	{
-		// this.osmMap.addLayer(marker.layer);
 		this.osmMap.addOverlay(marker.overlay);
 		
 		parentConstructor.prototype.addMarker.call(this, marker);

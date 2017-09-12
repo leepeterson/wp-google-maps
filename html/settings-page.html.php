@@ -4,8 +4,8 @@
 	<form method="POST" class="wpgmza">
 		<input type="hidden" name="action" value="wpgmza_save_settings"/>
 	
-		<div id="wpgmza-settings-tabs" data-wpgmza-wp-action-before="wpgmza_map_settings_container_before" data-wpgmza-wp-action-after="wpgmza_map_settings_container_after">
-			<ul data-wpgmza-wp-action-before="wpgmza_map_settings_tabs_before" data-wpgmza-wp-action-after="wpgmza_map_settings_tabs_after">
+		<div id="wpgmza-settings-tabs" data-wpgmza-wp-filter-prepend="wpgmza_map_settings_container_prepend" data-wpgmza-wp-filter-append="wpgmza_map_settings_container_append">
+			<ul data-wpgmza-wp-filter-prepend="wpgmza_map_settings_tabs_prepend" data-wpgmza-wp-filter-append="wpgmza_map_settings_tabs_append">
 				<li>
 					<a href="#maps">
 						<?php
@@ -36,7 +36,7 @@
 				</li>
 			</ul>
 			
-			<div id="maps" data-wpgmza-wp-action-before="wpgmza_map_settings_maps_before" data-wpgmza-wp-action-after="wpgmza_map_settings_maps_after">
+			<div id="maps" data-wpgmza-wp-filter-prepend="wpgmza_map_settings_maps_prepend" data-wpgmza-wp-filter-append="wpgmza_map_settings_maps_append">
 				<h3><?php _e('Map Settings', 'wp-google-maps'); ?></h3>
 				<fieldset>
 					<label><?php _e('Engine', 'wp-google-maps'); ?></label>
@@ -292,7 +292,7 @@
 					</div>
 				</fieldset>
 			</div>
-			<div id="infowindows" data-wpgmza-wp-action-before="wpgmza_map_settings_infowindows_before" data-wpgmza-wp-action-after="wpgmza_map_settings_infowindows_after">
+			<div id="infowindows" data-wpgmza-wp-filter-prepend="wpgmza_map_settings_infowindows_prepend" data-wpgmza-wp-filter-append="wpgmza_map_settings_infowindows_append">
 				<h3>
 					<?php
 					_e("Marker InfoWindow Settings");
@@ -323,7 +323,7 @@
 					<input name="disable_infowindows" type="checkbox" value="1"/>
 				</fieldset>
 			</div>
-			<div id="markerlisting" data-wpgmza-wp-action-before="wpgmza_map_settings_markerlisting_before" data-wpgmza-wp-action-after="wpgmza_map_settings_markerlisting_after">
+			<div id="markerlisting" data-wpgmza-wp-filter-prepend="wpgmza_map_settings_markerlisting_prepend" data-wpgmza-wp-filter-append="wpgmza_map_settings_markerlisting_append">
 				<h3>
 					<?php
 					_e("Marker Listing Settings","wp-google-maps");
@@ -548,7 +548,7 @@
 					</div>
 				</fieldset>
 			</div>
-			<div id="advanced" data-wpgmza-wp-action-before="wpgmza_map_settings_advanced_before" data-wpgmza-wp-action-after="wpgmza_map_settings_advanced_after">
+			<div id="advanced" data-wpgmza-wp-filter-prepend="wpgmza_map_settings_advanced_prepend" data-wpgmza-wp-filter-append="wpgmza_map_settings_advanced_append">
 				<h3>
 					<?php
 					_e("Advanced Settings","wp-google-maps");
@@ -588,6 +588,7 @@
 					_e("Custom JavaScript","wp-google-maps");
 					?>
 				</h4>
+				
 				<fieldset>
 					<label>
 						<?php
@@ -595,6 +596,22 @@
 						?>
 					</label>
 					<textarea name="custom_js"></textarea>
+				</fieldset>
+				<fieldset>
+					<label>
+						<?php
+						_e("Custom JavaScript Dependencies","wp-google-maps");
+						?>
+					</label>
+					<div>
+						<input name="custom_js_dependencies" />
+						<br/>
+						<small>
+							<?php
+							_e('Comma separated script handles', 'wp-google-maps');
+							?>
+						</small>
+					</div>
 				</fieldset>
 				
 				<fieldset>

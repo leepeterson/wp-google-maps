@@ -8,6 +8,8 @@
 	{
 		var self = this;
 		
+		WPGMZA.assertInstanceOf(this, "Map");
+		
 		WPGMZA.EventDispatcher.call(this);
 		
 		if(!(element instanceof HTMLElement))
@@ -98,24 +100,30 @@
 	WPGMZA.Map.prototype = Object.create(WPGMZA.EventDispatcher.prototype);
 	WPGMZA.Map.prototype.constructor = WPGMZA.Map;
 	
-	WPGMZA.Map.createInstance = function(element)
+	WPGMZA.Map.getConstructor = function()
 	{
 		switch(WPGMZA.settings.engine)
 		{
 			case "google-maps":
 				if(WPGMZA.isProVersion())
-					return new WPGMZA.GoogleProMap(element);
+					return WPGMZA.GoogleProMap;
 				
-				return new WPGMZA.GoogleMap(element);
+				return WPGMZA.GoogleMap;
 				break;
 				
 			default:
 				if(WPGMZA.isProVersion())
-					return new WPGMZA.OSMProMap(element);
+					return WPGMZA.OSMProMap;
 				
-				return new WPGMZA.OSMMap(element);
+				return WPGMZA.OSMMap;
 				break;
 		}
+	}
+	
+	WPGMZA.Map.createInstance = function(element)
+	{
+		var constructor = WPGMZA.Map.getConstructor();
+		return new constructor(element);
 	}
 	
 	WPGMZA.Map.ALIGN_LEFT 		= 1;
@@ -284,6 +292,17 @@
 		this.dispatchEvent({type: "polygonremoved", polygon: polygon});
 	}
 	
+	WPGMZA.Map.prototype.getPolylineByID = function(id)
+	{
+		for(var i = 0; i < this.polylines.length; i++)
+		{
+			if(this.polylines[i].id == id)
+				return this.polylines[i];
+		}
+		
+		return null;
+	}
+	
 	/**
 	 * Adds the specified polyline to this map
 	 * @return void
@@ -431,6 +450,9 @@
 					json = response;
 				
 				self.onFetchComplete(json);
+			},
+			error: function(xhr, status, error) {
+				alert("Error fetching map objects :- " + error);
 			}
 		});
 	}

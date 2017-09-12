@@ -8,6 +8,8 @@
 	{
 		var self = this;
 		
+		WPGMZA.assertInstanceOf(this, "Marker");
+		
 		WPGMZA.EventDispatcher.call(this);
 		
 		this.lat = "36.778261";
@@ -33,22 +35,34 @@
 	WPGMZA.Marker.prototype = Object.create(WPGMZA.MapObject.prototype);
 	WPGMZA.Marker.prototype.constructor = WPGMZA.Marker;
 	
-	WPGMZA.Marker.createInstance = function(row)
+	/**
+	 * Gets the constructor. You can use this instead of hard coding the parent class when inheriting,
+	 * which is helpful for making subclasses that work with Basic only, Pro, Google, OSM or a 
+	 * combination of the four.
+	 * @return function
+	 */
+	WPGMZA.Marker.getConstructor = function()
 	{
 		switch(WPGMZA.settings.engine)
 		{
 			case "google-maps":
 				if(WPGMZA.isProVersion())
-					return new WPGMZA.GoogleProMarker(row);
-				return new WPGMZA.GoogleMarker(row);
+					return WPGMZA.GoogleProMarker;
+				return WPGMZA.GoogleMarker;
 				break;
 				
 			default:
 				if(WPGMZA.isProVersion())
-					return new WPGMZA.OSMProMarker(row);
-				return new WPGMZA.OSMMarker(row);
+					return WPGMZA.OSMProMarker;
+				return WPGMZA.OSMMarker;
 				break;
 		}
+	}
+	
+	WPGMZA.Marker.createInstance = function(row)
+	{
+		var constructor = WPGMZA.Marker.getConstructor();
+		return new constructor(row);
 	}
 	
 	WPGMZA.Marker.ANIMATION_NONE			= "0";

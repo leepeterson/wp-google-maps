@@ -11,6 +11,8 @@ require_once(WPGMZA_DIR . '/php/class.marker-table.php');
 
 class Map extends Smart\Document
 {
+	protected static $hasEnqueuedCustomCSSandJS = false;
+	
 	// TODO: Make all these private and expose them through __get and __set
 	public $id;
 	public $title;
@@ -189,10 +191,6 @@ class Map extends Smart\Document
 		wp_enqueue_style('wpgmza_v7_style', WPGMZA_BASE . 'css/v7-style.css');
 		if(!empty(Plugin::$settings->custom_css))
 			wp_add_inline_style('wpgmza_v7_style', Plugin::$settings->custom_css);
-		
-		wp_enqueue_script('wpgmza_v7_custom_script', WPGMZA_BASE . 'js/v7-custom-script.js', array('wpgmza-core'));
-		if(!empty(Plugin::$settings->custom_js))
-			wp_add_inline_script('wpgmza_v7_custom_script', Plugin::$settings->custom_js);
 
 		// FontAwesome
 		wp_register_style('fontawesome', WPGMZA_BASE . 'css/font-awesome.min.css');
@@ -200,9 +198,36 @@ class Map extends Smart\Document
 	
 		// Datatables
 		wp_enqueue_style('wpgmza_admin_datatables_style', WPGMZA_BASE . 'css/data_table.css',array(),(string)Plugin::$version.'b');
+		
+		$this->enqueueCustomScript();
 
 		do_action( 'wpgmza_enqueue_map_scripts' );
-
+	}
+	
+	public function enqueueCustomScript()
+	{
+		if(Map::$hasEnqueuedCustomCSSandJS)
+			return;
+		
+		if(empty(Plugin::$settings->custom_js))
+			return;	
+		
+		$customDependencies = array();
+		
+		if(!empty(Plugin::$settings->custom_js_dependencies))
+			$customDependencies = array_map('trim', 
+				explode(',', Plugin::$settings->custom_js_dependencies)
+			);
+		
+		$dependencies = array_merge(
+			array('wpgmza-core'),
+			$customDependencies
+		);
+		
+		wp_enqueue_script('wpgmza_v7_custom_script', WPGMZA_BASE . 'js/v7-custom-script.js', $dependencies);
+		wp_add_inline_script('wpgmza_v7_custom_script', Plugin::$settings->custom_js);
+		
+		Map::$hasEnqueuedCustomCSSandJS = true;
 	}
 	
 	/**

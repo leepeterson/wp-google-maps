@@ -1,5 +1,7 @@
 WPGMZA.EventDispatcher = function()
 {
+	WPGMZA.assertInstanceOf(this, "EventDispatcher");
+	
 	this._listenersByType = [];
 }
 

@@ -1,4 +1,4 @@
-<div id="wpgmza-map-edit-page" data-wpgmza-wp-action-before="wpgmza_map_edit_page_before" data-wpgmza-wp-action-after="wpgmza_map_edit_page_after">
+<div id="wpgmza-map-edit-page" data-wpgmza-wp-filter-prepend="wpgmza_map_edit_page_prepend" data-wpgmza-wp-filter-append="wpgmza_map_edit_page_append">
 	<div class="wpgmza-preloader main-preloader">
 		<div class="wpgmza-loader">
 			<?php

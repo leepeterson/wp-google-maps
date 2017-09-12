@@ -4,6 +4,8 @@
 	{
 		var self = this;
 		
+		WPGMZA.assertInstanceOf(this, "InfoWindow");
+		
 		this.mapObject = mapObject;
 		
 		mapObject.addEventListener("added", function(event) { 
@@ -14,22 +16,28 @@
 	WPGMZA.InfoWindow.OPEN_BY_CLICK = 1;
 	WPGMZA.InfoWindow.OPEN_BY_HOVER = 2;
 	
-	WPGMZA.InfoWindow.createInstance = function(mapObject)
+	WPGMZA.InfoWindow.getConstructor = function()
 	{
 		switch(WPGMZA.settings.engine)
 		{
 			case "google-maps":
 				if(WPGMZA.isProVersion())
-					return new WPGMZA.GoogleProInfoWindow(mapObject);
-				return new WPGMZA.GoogleInfoWindow(mapObject);
+					return WPGMZA.GoogleProInfoWindow;
+				return WPGMZA.GoogleInfoWindow;
 				break;
 				
 			default:
 				if(WPGMZA.isProVersion())
-					return new WPGMZA.OSMProInfoWindow(mapObject);
-				return new WPGMZA.OSMInfoWindow(mapObject);
+					return WPGMZA.OSMProInfoWindow;
+				return WPGMZA.OSMInfoWindow;
 				break;
 		}
+	}
+	
+	WPGMZA.InfoWindow.createInstance = function(mapObject)
+	{
+		var constructor = this.getConstructor();
+		return new constructor(mapObject);
 	}
 	
 	/**

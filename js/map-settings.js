@@ -10,6 +10,8 @@
 		var str = element.getAttribute("data-settings");
 		var json = JSON.parse(str);
 		
+		WPGMZA.assertInstanceOf(this, "MapSettings");
+		
 		for(var key in json)
 		{
 			var value = json[key];

@@ -2,6 +2,8 @@
 	
 	WPGMZA.VertexContextMenu = function(mapEditPage, items)
 	{
+		WPGMZA.assertInstanceOf(this, "VertexContextMenu");
+		
 		this.mapEditPage = mapEditPage;
 		
 		this.element = document.createElement("div");
