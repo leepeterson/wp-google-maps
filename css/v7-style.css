@@ -889,3 +889,8 @@ ul.wpgmza-inline-bullet li:not(:first-child):before
 #wpgmza-jquery-error.is-hidden {
 	display: none;
 }
+
+form.wpgmza table#wpgmza-filters
+{
+	width: auto;
+}
